@@ -10,8 +10,6 @@ namespace LibraryManagement.Core.Entities
 {
     public class Book : BaseEntity
     {
-        [Required]
-        [StringLength(150)]
         public string Title { get; set; } = string.Empty;
 
         public int PublishYear { get; set; }
