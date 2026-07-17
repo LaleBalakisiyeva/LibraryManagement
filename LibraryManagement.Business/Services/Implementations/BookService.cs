@@ -31,11 +31,40 @@ namespace LibraryManagement.Business.Services.Implementations
 
         public async Task<BookDto> GetByIdAsync(int id)
         {
-            var book = await _unitOfWork.Books.GetByIdAsync(id);
+            var book = await _unitOfWork.Books.GetByIdWithAuthorAsync(id);
+
             if (book == null)
                 throw new NotFoundException($"{id} The book with id was not found.");
 
             return _mapper.Map<BookDto>(book);
+        }
+
+        public async Task CreateAsync(BookCreateDto dto)
+        {
+            var book = _mapper.Map<Core.Entities.Book>(dto);
+            await _unitOfWork.Books.AddAsync(book);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(int id, BookUpdateDto dto)
+        {
+            var book = await _unitOfWork.Books.GetByIdAsync(id);
+            if (book == null)
+                throw new NotFoundException($"{id} The book with id was not found.");
+
+            _mapper.Map(dto, book); 
+            _unitOfWork.Books.Update(book);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var book = await _unitOfWork.Books.GetByIdAsync(id);
+            if (book == null)
+                throw new NotFoundException($"{id} The book with id was not found.");
+
+            _unitOfWork.Books.Remove(book);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

@@ -10,5 +10,6 @@ namespace LibraryManagement.DAL.Repositories.Interfaces
     public interface IBookRepository : IGenericRepository<Book>
     {
         Task<IEnumerable<Book>> GetAllWithAuthorAsync();
+        Task<Book> GetByIdWithAuthorAsync(int id);
     }
 }

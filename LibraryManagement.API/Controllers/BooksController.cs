@@ -27,7 +27,29 @@ namespace LibraryManagement.API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var book = await _bookService.GetByIdAsync(id);
-            return Ok(book);
+            return Ok(book); 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] BookCreateDto dto)
+        {
+            await _bookService.CreateAsync(dto);
+            return StatusCode(201); 
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] BookUpdateDto dto)
+        {
+            await _bookService.UpdateAsync(id, dto);
+            return NoContent(); 
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _bookService.DeleteAsync(id);
+            return NoContent(); 
         }
     }
 }
+

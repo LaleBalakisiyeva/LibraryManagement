@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using LibraryManagement.Business.Helpers.Mapper;
 using LibraryManagement.Business.Services.Implementations;
 using LibraryManagement.Business.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,9 +20,10 @@ namespace LibraryManagement.Business
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthorService, AuthorService>();
 
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddMaps(Assembly.GetExecutingAssembly());
+            });
 
             return services;
         }

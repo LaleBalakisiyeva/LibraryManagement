@@ -33,9 +33,37 @@ namespace LibraryManagement.Business.Services.Implementations
         {
             var author = await _unitOfWork.Authors.GetByIdAsync(id);
             if (author == null)
-                throw new NotFoundException($"{id} The book with id was not found.");
+                throw new NotFoundException($"{id} Author with ID not found.");
 
             return _mapper.Map<AuthorDto>(author);
+        }
+
+        public async Task CreateAsync(AuthorCreateDto dto)
+        {
+            var author = _mapper.Map<Core.Entities.Author>(dto);
+            await _unitOfWork.Authors.AddAsync(author);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(int id, AuthorUpdateDto dto)
+        {
+            var author = await _unitOfWork.Authors.GetByIdAsync(id);
+            if (author == null)
+                throw new NotFoundException($"{id} Author with ID not found.");
+
+            _mapper.Map(dto, author);
+            _unitOfWork.Authors.Update(author);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var author = await _unitOfWork.Authors.GetByIdAsync(id);
+            if (author == null)
+                throw new NotFoundException($"{id} Author with ID not found.");
+
+            _unitOfWork.Authors.Remove(author);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

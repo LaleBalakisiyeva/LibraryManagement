@@ -20,5 +20,12 @@ namespace LibraryManagement.DAL.Repositories.Implementations
         {
             return await _context.Books.Include(b => b.Author).ToListAsync();
         }
+
+        public async Task<Book> GetByIdWithAuthorAsync(int id)
+        {
+            return await _context.Books
+                                 .Include(b => b.Author) 
+                                 .FirstOrDefaultAsync(b => b.Id == id);
+        }
     }
 }

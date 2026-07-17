@@ -11,5 +11,8 @@ namespace LibraryManagement.Business.Services.Interfaces
     {
         Task<IEnumerable<BookDto>> GetAllAsync();
         Task<BookDto> GetByIdAsync(int id);
+        Task CreateAsync(BookCreateDto dto);
+        Task UpdateAsync(int id, BookUpdateDto dto);
+        Task DeleteAsync(int id);
     }
 }
