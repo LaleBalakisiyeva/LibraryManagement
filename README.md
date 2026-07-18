@@ -36,9 +36,23 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **Dynamic Sorting:** Added dynamic sorting capabilities based on query parameters (e.g., sort by `Title`, `PublishYear`, ascending/descending) using `OrderBy()` and `OrderByDescending()`.
 * **Metadata Wrapper:** Introduced a generic `PaginatedResult<T>` wrapper class to return the requested list of data alongside essential frontend metadata (`TotalCount`, `TotalPages`, `PageNumber`, `PageSize`).
 
+### 5. API Documentation & Interactive UI (Checkpoint 6)
+* **OpenAPI Integration:** Embedded **Swagger** engine into the .NET Core pipeline using the `Swashbuckle.AspNetCore` package to automate contract generation.
+* **Automatic Schema Discovery:** Dynamically discovers and maps all Controller routes, complete HTTP Verbs, response schemas, and custom payload structures.
+* **Parameter Mapping:** Seamlessly displays endpoints involving CRUD mechanics alongside explicit pagination parameters (`PageNumber`, `PageSize`) and dynamic sorting options on a unified UI.
+* **Live Playground:** Offers a built-in sandbox interface enabling developers or API consumers to run live validation checks and review backend responses on the fly.
+
+### 6. Automated Unit Testing Suite (Checkpoint 7)
+* **Framework Deployment:** Engineered an isolated test target (`LibraryManagement.Tests`) relying on the **xUnit** automation framework.
+* **Decoupled Architecture Mocking:** Utilized **Moq** to isolate the Business layer completely from database side-effects. Explicitly registered internal repository implementations (`IBookRepository`, `IAuthorRepository`) inside an insulated `IUnitOfWork` facade layout.
+* **Infrastructure Virtualization:** Safely simulated secondary operational tasks including object mapping definitions (`IMapper`) and user-submitted validation payloads (`FluentValidation`).
+* **Behavioral Verification:** Covered predictable data flows (e.g., entity tracking checks, payload creation saves, entity retrieval configurations) via fluent semantic constraints (**FluentAssertions**), registering a 100% pass verification metrics natively.
+
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
 * **Object Mapping:** AutoMapper
 * **Validation:** FluentValidation
+* **API Documentation:** Swagger / OpenAPI (Swashbuckle)
+* **Testing Stack:** xUnit, Moq, FluentAssertions
 * **Design Patterns:** Clean Architecture, Repository Pattern, Unit of Work Pattern
