@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using LibraryManagement.Business.DTOs.Book;
 using LibraryManagement.Business.Helpers.Exceptions;
 using LibraryManagement.Business.Services.Interfaces;
@@ -16,11 +17,13 @@ namespace LibraryManagement.Business.Services.Implementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IValidator<BookCreateDto> _createValidator;
 
-        public BookService(IUnitOfWork unitOfWork, IMapper mapper)
+        public BookService(IUnitOfWork unitOfWork, IMapper mapper, IValidator<BookCreateDto> createValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _createValidator = createValidator; 
         }
 
         public async Task<IEnumerable<BookDto>> GetAllAsync()
@@ -41,6 +44,12 @@ namespace LibraryManagement.Business.Services.Implementations
 
         public async Task CreateAsync(BookCreateDto dto)
         {
+            var validationResult = await _createValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
             var book = _mapper.Map<Core.Entities.Book>(dto);
             await _unitOfWork.Books.AddAsync(book);
             await _unitOfWork.SaveChangesAsync();

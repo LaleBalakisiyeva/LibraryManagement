@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using LibraryManagement.Business.DTOs.Author;
 using LibraryManagement.Business.Helpers.Exceptions;
 using LibraryManagement.Business.Services.Interfaces;
@@ -16,11 +17,13 @@ namespace LibraryManagement.Business.Services.Implementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IValidator<AuthorCreateDto> _createValidator;
 
-        public AuthorService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AuthorService(IUnitOfWork unitOfWork, IMapper mapper, IValidator<AuthorCreateDto> createValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _createValidator = createValidator; 
         }
 
         public async Task<IEnumerable<AuthorDto>> GetAllAsync()
@@ -40,6 +43,12 @@ namespace LibraryManagement.Business.Services.Implementations
 
         public async Task CreateAsync(AuthorCreateDto dto)
         {
+            var validationResult = await _createValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
             var author = _mapper.Map<Core.Entities.Author>(dto);
             await _unitOfWork.Authors.AddAsync(author);
             await _unitOfWork.SaveChangesAsync();
