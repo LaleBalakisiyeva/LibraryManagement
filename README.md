@@ -5,23 +5,22 @@ This project is a robust and scalable RESTful API for a Library Management Syste
 ## 🏗️ Architecture Layers
 
 The solution is divided into four main layers to ensure a strict separation of concerns, scalability, and maintainability:
-
 * **Core:** The domain layer containing Entities (e.g., `Book`, `Author`) and core interface abstractions.
 * **DAL (Data Access Layer):** Manages database operations using **Entity Framework Core**. It implements the **Repository** and **Unit of Work** design patterns for abstracting database interactions.
-* **Business:** Contains the core business logic, Data Transfer Objects (DTOs), object mapping configurations (**AutoMapper**), and validation rules.
+* **Business:** Contains the core business logic, **Data Transfer Objects (DTOs)**, object mapping configurations (**AutoMapper**), and validation rules.
 * **API:** The entry point of the application containing Controllers, routing, and custom Middlewares.
 
 ## 🚀 Implemented Features
 
 ### 1. Architectural Setup (Checkpoints 1 & 2)
 * Established a modular solution structure.
-* Configured Dependency Injection for services, repositories, and unit of work.
-* Set up Entity Framework Core for data access.
+* Configured **Dependency Injection** for services, repositories, and unit of work.
+* Set up **Entity Framework Core** for data access.
 
 ### 2. CRUD Operations & Data Mapping (Checkpoint 3)
 * Implemented full **Create, Read, Update, Delete (CRUD)** operations for `Author` and `Book` entities.
 * Integrated **AutoMapper** to seamlessly map data between Domain Entities and DTOs, ensuring sensitive data is not exposed.
-* Utilized **Eager Loading** (`.Include()`) to fetch related data efficiently without null references.
+* Utilized Eager Loading (`.Include()`) to fetch related data efficiently without null references.
 * Endpoints return standardized HTTP Status Codes (`200 OK`, `201 Created`, `204 No Content`).
 
 ### 3. Validation & Error Handling (Checkpoint 4)
@@ -32,8 +31,12 @@ The solution is divided into four main layers to ensure a strict separation of c
   * `NotFoundException` -> Returns **404 Not Found** when requested resources do not exist in the database.
   * Unhandled Exceptions -> Returns **500 Internal Server Error**.
 
-## 🛠️ Technologies & Tools
+### 4. Pagination & Sorting (Checkpoint 5)
+* **Pagination:** Implemented efficient pagination using LINQ's `Skip()` and `Take()` methods at the database (SQL) level to handle large datasets properly.
+* **Dynamic Sorting:** Added dynamic sorting capabilities based on query parameters (e.g., sort by `Title`, `PublishYear`, ascending/descending) using `OrderBy()` and `OrderByDescending()`.
+* **Metadata Wrapper:** Introduced a generic `PaginatedResult<T>` wrapper class to return the requested list of data alongside essential frontend metadata (`TotalCount`, `TotalPages`, `PageNumber`, `PageSize`).
 
+## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
 * **Object Mapping:** AutoMapper
