@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using LibraryManagement.Business.DTOs.Book;
+using LibraryManagement.Business.DTOs.Pagination;
 using LibraryManagement.Business.Helpers.Exceptions;
 using LibraryManagement.Business.Services.Interfaces;
 using LibraryManagement.Core.Entities;
@@ -23,13 +24,28 @@ namespace LibraryManagement.Business.Services.Implementations
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _createValidator = createValidator; 
+            _createValidator = createValidator;
         }
 
         public async Task<IEnumerable<BookDto>> GetAllAsync()
         {
             var books = await _unitOfWork.Books.GetAllWithAuthorAsync();
             return _mapper.Map<IEnumerable<BookDto>>(books);
+        }
+
+        public async Task<PaginatedResult<BookDto>> GetAllPagedAsync(int pageNumber, int pageSize, string? sortBy, bool isDescending)
+        {
+            var (books, totalCount) = await _unitOfWork.Books.GetAllPagedAsync(pageNumber, pageSize, sortBy, isDescending);
+
+            var mappedBooks = _mapper.Map<IEnumerable<BookDto>>(books);
+
+            return new PaginatedResult<BookDto>
+            {
+                Data = mappedBooks,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<BookDto> GetByIdAsync(int id)
@@ -61,7 +77,7 @@ namespace LibraryManagement.Business.Services.Implementations
             if (book == null)
                 throw new NotFoundException($"{id} The book with id was not found.");
 
-            _mapper.Map(dto, book); 
+            _mapper.Map(dto, book);
             _unitOfWork.Books.Update(book);
             await _unitOfWork.SaveChangesAsync();
         }

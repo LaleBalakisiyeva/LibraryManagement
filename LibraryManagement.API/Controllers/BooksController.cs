@@ -17,38 +17,42 @@ namespace LibraryManagement.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+            [FromQuery] int pageNumber = 1,          
+            [FromQuery] int pageSize = 10,           
+            [FromQuery] string? sortBy = null,       
+            [FromQuery] bool isDescending = false)   
         {
-            var books = await _bookService.GetAllAsync();
-            return Ok(books);
+            var result = await _bookService.GetAllPagedAsync(pageNumber, pageSize, sortBy, isDescending);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var book = await _bookService.GetByIdAsync(id);
-            return Ok(book); 
+            return Ok(book);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] BookCreateDto dto)
         {
             await _bookService.CreateAsync(dto);
-            return StatusCode(201); 
+            return StatusCode(201);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] BookUpdateDto dto)
         {
             await _bookService.UpdateAsync(id, dto);
-            return NoContent(); 
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _bookService.DeleteAsync(id);
-            return NoContent(); 
+            return NoContent();
         }
     }
 }
