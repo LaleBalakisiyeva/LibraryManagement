@@ -18,7 +18,10 @@ namespace LibraryManagement.DAL.Repositories.Implementations
 
         public async Task<IEnumerable<Book>> GetAllWithAuthorAsync()
         {
-            return await _context.Books.Include(b => b.Author).ToListAsync();
+            return await _context.Books
+                                 .Include(b => b.Author)
+                                 .AsNoTracking()
+                                 .ToListAsync();
         }
 
         public async Task<Book> GetByIdWithAuthorAsync(int id)
@@ -30,7 +33,10 @@ namespace LibraryManagement.DAL.Repositories.Implementations
 
         public async Task<(IEnumerable<Book> Books, int TotalCount)> GetAllPagedAsync(int pageNumber, int pageSize, string? sortBy, bool isDescending)
         {
-            var query = _context.Books.Include(b => b.Author).AsQueryable();
+            var query = _context.Books
+                                .Include(b => b.Author)
+                                .AsNoTracking()
+                                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(sortBy))
             {
