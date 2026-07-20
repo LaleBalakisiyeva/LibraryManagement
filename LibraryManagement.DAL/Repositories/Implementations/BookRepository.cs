@@ -33,6 +33,7 @@ namespace LibraryManagement.DAL.Repositories.Implementations
 
         public async Task<(IEnumerable<Book> Books, int TotalCount)> GetAllPagedAsync(int pageNumber, int pageSize, string? sortBy, bool isDescending)
         {
+
             var query = _context.Books
                                 .Include(b => b.Author)
                                 .AsNoTracking()

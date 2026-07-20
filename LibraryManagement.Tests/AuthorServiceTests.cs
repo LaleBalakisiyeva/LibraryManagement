@@ -2,6 +2,7 @@
 using FluentAssertions;
 using FluentValidation;
 using LibraryManagement.Business.DTOs.Author;
+using LibraryManagement.Business.Helpers.Exceptions;
 using LibraryManagement.Business.Services.Implementations;
 using LibraryManagement.Core.Entities;
 using LibraryManagement.DAL.Repositories.Interfaces;
@@ -18,19 +19,23 @@ namespace LibraryManagement.Tests
     {
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IMapper> _mockMapper;
-        private readonly Mock<IValidator<AuthorCreateDto>> _mockValidator;
+        private readonly Mock<IValidator<AuthorCreateDto>> _mockCreateValidator;
+        private readonly Mock<IValidator<AuthorUpdateDto>> _mockUpdateValidator; 
         private readonly AuthorService _authorService;
 
         public AuthorServiceTests()
         {
             _mockUnitOfWork = new Mock<IUnitOfWork> { DefaultValue = DefaultValue.Mock };
             _mockMapper = new Mock<IMapper>();
-            _mockValidator = new Mock<IValidator<AuthorCreateDto>>();
+            _mockCreateValidator = new Mock<IValidator<AuthorCreateDto>>();
+            _mockUpdateValidator = new Mock<IValidator<AuthorUpdateDto>>(); 
 
+            
             _authorService = new AuthorService(
                 _mockUnitOfWork.Object,
                 _mockMapper.Object,
-                _mockValidator.Object
+                _mockCreateValidator.Object,
+                _mockUpdateValidator.Object
             );
         }
 
@@ -54,6 +59,22 @@ namespace LibraryManagement.Tests
             result.Name.Should().Be("Martin Fowler");
         }
 
+       
+        [Fact]
+        public async Task GetByIdAsync_WhenAuthorDoesNotExist_ThrowsNotFoundException()
+        {
+         
+            int nonExistentId = 999;
+            _mockUnitOfWork.Setup(u => u.Authors.GetByIdAsync(nonExistentId))
+                           .ReturnsAsync((Author)null);
+
+           
+            var exception = await Assert.ThrowsAsync<NotFoundException>(() =>
+                _authorService.GetByIdAsync(nonExistentId));
+
+            exception.Message.Should().Be($"{nonExistentId} Author with ID not found.");
+        }
+
         [Fact]
         public async Task CreateAsync_ShouldCallUnitOfWorkSave()
         {
@@ -61,7 +82,7 @@ namespace LibraryManagement.Tests
             var authorEntity = new Author { Name = "Linus Torvalds" };
 
             var validationResult = new FluentValidation.Results.ValidationResult();
-            _mockValidator.Setup(v => v.ValidateAsync(newAuthorDto, default))
+            _mockCreateValidator.Setup(v => v.ValidateAsync(newAuthorDto, default))
                           .ReturnsAsync(validationResult);
 
             _mockMapper.Setup(m => m.Map<Author>(newAuthorDto))
