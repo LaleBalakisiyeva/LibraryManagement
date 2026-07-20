@@ -14,7 +14,7 @@ namespace LibraryManagement.Business.Validators.Book
         {
             RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("The book title must be included.")
-                .MaximumLength(150).WithMessage("Kitab adı 150 simvoldan çox ola bilməz.");
+                .MaximumLength(150).WithMessage("The book title cannot exceed 150 characters.");
 
             RuleFor(x => x.AuthorId)
                 .GreaterThan(0).WithMessage("Please enter a valid author ID.");
