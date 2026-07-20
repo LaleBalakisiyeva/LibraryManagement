@@ -19,12 +19,18 @@ namespace LibraryManagement.Business.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IValidator<BookCreateDto> _createValidator;
+        private readonly IValidator<BookUpdateDto> _updateValidator;
 
-        public BookService(IUnitOfWork unitOfWork, IMapper mapper, IValidator<BookCreateDto> createValidator)
+        public BookService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IValidator<BookCreateDto> createValidator,
+            IValidator<BookUpdateDto> updateValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
 
         public async Task<IEnumerable<BookDto>> GetAllAsync()
@@ -73,6 +79,12 @@ namespace LibraryManagement.Business.Services.Implementations
 
         public async Task UpdateAsync(int id, BookUpdateDto dto)
         {
+            var validationResult = await _updateValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
             var book = await _unitOfWork.Books.GetByIdAsync(id);
             if (book == null)
                 throw new NotFoundException($"{id} The book with id was not found.");

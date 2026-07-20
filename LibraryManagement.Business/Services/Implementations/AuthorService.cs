@@ -18,12 +18,18 @@ namespace LibraryManagement.Business.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IValidator<AuthorCreateDto> _createValidator;
+        private readonly IValidator<AuthorUpdateDto> _updateValidator;
 
-        public AuthorService(IUnitOfWork unitOfWork, IMapper mapper, IValidator<AuthorCreateDto> createValidator)
+        public AuthorService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IValidator<AuthorCreateDto> createValidator,
+            IValidator<AuthorUpdateDto> updateValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _createValidator = createValidator; 
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
 
         public async Task<IEnumerable<AuthorDto>> GetAllAsync()
@@ -56,6 +62,12 @@ namespace LibraryManagement.Business.Services.Implementations
 
         public async Task UpdateAsync(int id, AuthorUpdateDto dto)
         {
+            var validationResult = await _updateValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
             var author = await _unitOfWork.Authors.GetByIdAsync(id);
             if (author == null)
                 throw new NotFoundException($"{id} Author with ID not found.");
