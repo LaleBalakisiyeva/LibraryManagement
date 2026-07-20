@@ -14,6 +14,7 @@ namespace LibraryManagement.DAL.Repositories.Implementations
 
         private IBookRepository _bookRepository;
         private IAuthorRepository _authorRepository;
+        private IUserRepository _userRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -23,6 +24,8 @@ namespace LibraryManagement.DAL.Repositories.Implementations
         public IBookRepository Books => _bookRepository ??= new BookRepository(_context);
 
         public IAuthorRepository Authors => _authorRepository ??= new AuthorRepository(_context);
+
+        public IUserRepository Users => _userRepository ??= new UserRepository(_context);
 
         public async Task<int> SaveChangesAsync()
         {

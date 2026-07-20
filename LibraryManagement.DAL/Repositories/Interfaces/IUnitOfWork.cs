@@ -10,6 +10,7 @@ namespace LibraryManagement.DAL.Repositories.Interfaces
     {
         IBookRepository Books { get; }
         IAuthorRepository Authors { get; }
+        IUserRepository Users { get; }
         Task<int> SaveChangesAsync();
     }
 }
