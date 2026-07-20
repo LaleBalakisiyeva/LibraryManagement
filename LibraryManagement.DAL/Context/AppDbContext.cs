@@ -24,14 +24,10 @@ namespace LibraryManagement.DAL.Context
         {
             base.OnModelCreating(modelBuilder);
 
-  
-            modelBuilder.Entity<Author>()
-                .HasMany(a => a.Books)
-                .WithOne(b => b.Author)
-                .HasForeignKey(b => b.AuthorId);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
 
-        
+
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var entries = ChangeTracker.Entries<BaseEntity>();
