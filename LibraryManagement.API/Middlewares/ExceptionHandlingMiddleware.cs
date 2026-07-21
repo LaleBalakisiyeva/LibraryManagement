@@ -22,11 +22,11 @@ namespace LibraryManagement.API.Middlewares
         {
             try
             {
-                await _next(context); 
+                await _next(context);
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex); 
+                await HandleExceptionAsync(context, ex);
             }
         }
 
@@ -47,6 +47,16 @@ namespace LibraryManagement.API.Middlewares
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     var errors = valEx.Errors.Select(e => new { field = e.PropertyName, error = e.ErrorMessage });
                     responseError = new { message = "Validation error", details = errors };
+                    break;
+
+                case InvalidOperationException invOpEx: 
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    responseError = new { message = invOpEx.Message };
+                    break;
+
+                case UnauthorizedAccessException unauthEx: 
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    responseError = new { message = unauthEx.Message };
                     break;
 
                 default:

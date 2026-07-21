@@ -60,7 +60,7 @@ namespace LibraryManagement.Business.Services.Implementations
 
         private TokenResponseDto GenerateJwtToken(User user)
         {
-            var secretKey = _configuration["JwtSettings:Secret"];
+            var secretKey = _configuration["Jwt:SecurityKey"];
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -72,12 +72,12 @@ namespace LibraryManagement.Business.Services.Implementations
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var expirationMinutes = Convert.ToDouble(_configuration["JwtSettings:ExpirationInMinutes"]);
+            var expirationMinutes = Convert.ToDouble(_configuration["Jwt:ExpirationInMinutes"]);
             var expiration = DateTime.UtcNow.AddMinutes(expirationMinutes);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["JwtSettings:Issuer"],
-                audience: _configuration["JwtSettings:Audience"],
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
                 expires: expiration,
                 signingCredentials: credentials);

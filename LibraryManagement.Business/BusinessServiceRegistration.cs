@@ -19,6 +19,7 @@ namespace LibraryManagement.Business
 
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthorService, AuthorService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddAutoMapper(cfg =>
             {
