@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LibraryManagement.Business.DTOs.Auth;
 using LibraryManagement.Business.DTOs.Author;
 using LibraryManagement.Business.DTOs.Book;
 using LibraryManagement.Core.Entities;
@@ -23,6 +24,9 @@ namespace LibraryManagement.Business.Helpers.Mapper
             CreateMap<Author, AuthorDto>().ReverseMap();
             CreateMap<AuthorCreateDto, Author>();
             CreateMap<AuthorUpdateDto, Author>();
+
+            CreateMap<RegisterDto, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
         }
     }
 }
