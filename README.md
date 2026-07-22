@@ -67,6 +67,17 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **Configuration & DI Management:** Properly mapped and isolated sensitive token configurations (`SecurityKey`, `Issuer`, `Audience`) using `appsettings.json`. Successfully registered required authentication services (`IAuthService`) within the Dependency Injection container.
 * **Database Synchronization:** Generated and applied Entity Framework Core migrations to materialize the new `Users` table schema into the underlying SQL database, ensuring perfect synchronization between the Domain layer and Data layer.
 
+#### 9. Stateless Authentication Middleware Pipeline (Checkpoint 3)
+* **Stateless API Architecture:** Configured the **JWT Bearer Authentication Scheme** globally to ensure the API operates on strict **Stateless REST** principles, completely eliminating cookie or session state dependencies.
+* **Token Validation:** Implemented robust `TokenValidationParameters` to automatically verify token signatures (`IssuerSigningKey`), validate the `Issuer` and `Audience`, and enforce token expiration rules (`Lifetime`).
+* **Pipeline Execution Order:** Engineered the HTTP request **Middleware Pipeline** by explicitly placing `app.UseAuthentication()` prior to `app.UseAuthorization()`, ensuring client identities are fully resolved before access policies and permissions are evaluated.
+
+#### 10. Role-Based Access Control (RBAC) (Checkpoint 4)
+* **Endpoint Protection:** Enforced **Role-Based Access Control (RBAC)** across Controller boundaries using `[Authorize(Roles = "...")]` attributes, effectively isolating access levels between `USER` and `ADMIN` roles.
+* **Privilege Segregation:** Secured resource-mutating operations (`POST`, `PUT`, `DELETE`) exclusively for `ADMIN` accounts, while permitting standard read operations (`GET`) for all authenticated users (`USER,ADMIN`).
+* **REST Error Semantics:** Strictly adhered to REST standards for authorization failures. The pipeline natively returns **401 Unauthorized** for missing or invalid tokens, and **403 Forbidden** for authenticated users attempting to breach role-restricted endpoints.
+* **Stateless Role Resolution:** Embedded `ClaimTypes.Role` directly into the JWT payload during authentication. This allows the authorization middleware to evaluate permissions instantly in-memory, completely bypassing secondary database queries for role validation.
+
 ---
 
 ## 🛠️ Technologies & Tools
