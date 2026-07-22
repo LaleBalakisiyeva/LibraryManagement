@@ -60,17 +60,26 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **Data Integrity & Constraints:** Applied Entity Framework Core Fluent API configurations to enforce unique constraints on `Email` and `Username` fields.
 * **Repository Integration:** Expanded the Data Access Layer (DAL) by introducing a dedicated `IUserRepository` with user-specific query methods (e.g., `GetByUsernameAsync`). This was seamlessly integrated into the lazy-initialized `UnitOfWork` pipeline for optimized database transactions.
 
+#### 8. Authentication Endpoints & JWT Authorization (Checkpoint 2)
+* **JWT Implementation:** Developed fully functional `Register` and `Login` endpoints within a dedicated `AuthController`. Integrated **JSON Web Tokens (JWT)** for stateless and secure API authorization, embedding standard claims (e.g., User ID, Username, Roles) into the token payload.
+* **Clean Controller Refactoring:** Adhered strictly to Clean Architecture principles by keeping controllers "thin". Removed redundant `try-catch` blocks from the API layer and extended the global `ExceptionHandlingMiddleware` to gracefully intercept `UnauthorizedAccessException` (Returns **401 Unauthorized**) and `InvalidOperationException` (Returns **400 Bad Request**).
+* **Swagger Security Definition:** Upgraded the OpenAPI/Swagger configuration in `Program.cs` to support **Bearer Token** authentication. Introduced a customized UI security definition allowing developers to pass JWTs directly via the Swagger sandbox.
+* **Configuration & DI Management:** Properly mapped and isolated sensitive token configurations (`SecurityKey`, `Issuer`, `Audience`) using `appsettings.json`. Successfully registered required authentication services (`IAuthService`) within the Dependency Injection container.
+* **Database Synchronization:** Generated and applied Entity Framework Core migrations to materialize the new `Users` table schema into the underlying SQL database, ensuring perfect synchronization between the Domain layer and Data layer.
+
+---
+
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
 * **Object Mapping:** AutoMapper
 * **Validation:** FluentValidation
+* **Authentication & Authorization:** JWT (JSON Web Tokens), `Microsoft.AspNetCore.Authentication.JwtBearer`
 * **Security & Hashing:** BCrypt.Net-Next
 * **API Documentation:** Swagger / OpenAPI (Swashbuckle)
 * **Testing Stack:** xUnit, Moq, FluentAssertions
 * **Design Patterns:** Clean Architecture, Repository Pattern, Unit of Work Pattern
-* **Object Mapping:** AutoMapper
-* **Validation:** FluentValidation
-* **API Documentation:** Swagger / OpenAPI (Swashbuckle)
-* **Testing Stack:** xUnit, Moq, FluentAssertions
-* **Design Patterns:** Clean Architecture, Repository Pattern, Unit of Work Pattern
+
+
+
+
