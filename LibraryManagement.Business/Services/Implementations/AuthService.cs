@@ -40,7 +40,7 @@ namespace LibraryManagement.Business.Services.Implementations
             var user = _mapper.Map<User>(dto);
 
             user.PasswordHash = PasswordHasher.HashPassword(dto.Password);
-            user.Role = "User";
+            user.Role = "USER";
 
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
