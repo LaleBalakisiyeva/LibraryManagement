@@ -78,6 +78,12 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **REST Error Semantics:** Strictly adhered to REST standards for authorization failures. The pipeline natively returns **401 Unauthorized** for missing or invalid tokens, and **403 Forbidden** for authenticated users attempting to breach role-restricted endpoints.
 * **Stateless Role Resolution:** Embedded `ClaimTypes.Role` directly into the JWT payload during authentication. This allows the authorization middleware to evaluate permissions instantly in-memory, completely bypassing secondary database queries for role validation.
 
+#### 11. Token Expiration & Lifecycle Management (Checkpoint 5)
+* **Dynamic Configuration:** Extracted the token validity lifespan (`ExpirationInMinutes`) into `appsettings.json`, preventing hardcoded values and allowing seamless environment-specific adjustments.
+* **Timestamp Allocation:** Engineered the `AuthService` to dynamically calculate and embed exact UTC expiration timestamps (`Expires`) during the JWT generation phase.
+* **Client-Side Awareness:** Structured the authentication response (`TokenResponseDto`) to return not only the encoded token but also its explicit expiration timestamp, empowering front-end clients to manage sessions accurately.
+* **Automated Lifecycle Validation:** Configured the `.NET Core JwtBearer` middleware with `ValidateLifetime = true`. This guarantees that the system automatically intercepts expired tokens and returns a pristine **401 Unauthorized** response without requiring manual interception logic.
+
 ---
 
 ## 🛠️ Technologies & Tools
