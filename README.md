@@ -75,10 +75,15 @@ The solution is divided into four main layers to ensure a strict separation of c
 #### 10. Role-Based Access Control (RBAC) (Checkpoint 4)
 * **Endpoint Protection:** Enforced **Role-Based Access Control (RBAC)** across Controller boundaries using `[Authorize(Roles = "...")]` attributes, effectively isolating access levels between `USER` and `ADMIN` roles.
 * **Privilege Segregation:** Secured resource-mutating operations (`POST`, `PUT`, `DELETE`) exclusively for `ADMIN` accounts, while permitting standard read operations (`GET`) for all authenticated users (`USER,ADMIN`).
-* **REST Error Semantics:** Strictly adhered to REST standards for authorization failures. The pipeline natively returns **401 Unauthorized** for missing or invalid tokens, and **403 Forbidden** for authenticated users attempting to breach role-restricted endpoints.
 * **Stateless Role Resolution:** Embedded `ClaimTypes.Role` directly into the JWT payload during authentication. This allows the authorization middleware to evaluate permissions instantly in-memory, completely bypassing secondary database queries for role validation.
 
-#### 11. Token Expiration & Lifecycle Management (Checkpoint 5)
+#### 11. Auth Error Handling & REST Semantics (Checkpoint 5)
+* **401 vs 403 Differentiation:** Configured the authentication/authorization pipeline to strictly distinguish between unauthenticated and unauthorized requests.
+* **401 Unauthorized:** Automatically returned when a request lacks a valid JWT token or when authentication credentials fail.
+* **403 Forbidden:** Returned when a valid user token is provided, but the user's assigned role lacks sufficient permissions (e.g., standard `USER` attempting `ADMIN` routes).
+* **Middleware Alignment:** Guaranteed correct HTTP status codes by placing `app.UseAuthentication()` strictly before `app.UseAuthorization()` in `Program.cs`.
+
+#### 12. Token Expiration & Lifecycle Management (Checkpoint 6)
 * **Dynamic Configuration:** Extracted the token validity lifespan (`ExpirationInMinutes`) into `appsettings.json`, preventing hardcoded values and allowing seamless environment-specific adjustments.
 * **Timestamp Allocation:** Engineered the `AuthService` to dynamically calculate and embed exact UTC expiration timestamps (`Expires`) during the JWT generation phase.
 * **Client-Side Awareness:** Structured the authentication response (`TokenResponseDto`) to return not only the encoded token but also its explicit expiration timestamp, empowering front-end clients to manage sessions accurately.
