@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using LibraryManagement.Business.DTOs.Auth;
 using LibraryManagement.Business.Helpers;
 using LibraryManagement.Business.Services.Interfaces;
@@ -21,16 +22,23 @@ namespace LibraryManagement.Business.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly IValidator<RegisterDto> _registerValidator;
+        private readonly IValidator<LoginDto> _loginValidator;
 
-        public AuthService(IUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper)
+        public AuthService(IUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper, IValidator<RegisterDto> registerValidator, IValidator<LoginDto> loginValidator)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _mapper = mapper;
+            _registerValidator = registerValidator;
+            _loginValidator = loginValidator;
         }
 
         public async Task RegisterAsync(RegisterDto dto)
-        {
+        {           
+            await _registerValidator.ValidateAndThrowAsync(dto);
+
+            
             bool isExists = await _unitOfWork.Users.IsUsernameOrEmailExistsAsync(dto.Username, dto.Email);
             if (isExists)
             {
@@ -38,7 +46,6 @@ namespace LibraryManagement.Business.Services.Implementations
             }
 
             var user = _mapper.Map<User>(dto);
-
             user.PasswordHash = PasswordHasher.HashPassword(dto.Password);
             user.Role = "USER";
 
@@ -48,6 +55,9 @@ namespace LibraryManagement.Business.Services.Implementations
 
         public async Task<TokenResponseDto> LoginAsync(LoginDto dto)
         {
+            await _loginValidator.ValidateAndThrowAsync(dto);
+
+           
             var user = await _unitOfWork.Users.GetByUsernameAsync(dto.Username);
 
             if (user == null || !PasswordHasher.VerifyPassword(dto.Password, user.PasswordHash))
