@@ -5,7 +5,7 @@ This project is a robust and scalable RESTful API for a Library Management Syste
 ## 🏗️ Architecture Layers
 
 The solution is divided into four main layers to ensure a strict separation of concerns, scalability, and maintainability:
-* **Core:** The domain layer containing Entities (e.g., `Book`, `Author`, `User`) and core interface abstractions.
+* **Core:** The domain layer containing Entities (e.g., `Book`, `Author`, `User`, `Category`, `Order`) and core interface abstractions.
 * **DAL (Data Access Layer):** Manages database operations using **Entity Framework Core**. It implements the **Repository** and **Unit of Work** design patterns for abstracting database interactions.
 * **Business:** Contains the core business logic, **Data Transfer Objects (DTOs)**, object mapping configurations (**AutoMapper**), and validation rules.
 * **API:** The entry point of the application containing Controllers, routing, and custom Middlewares.
@@ -88,6 +88,17 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **Timestamp Allocation:** Engineered the `AuthService` to dynamically calculate and embed exact UTC expiration timestamps (`Expires`) during the JWT generation phase.
 * **Client-Side Awareness:** Structured the authentication response (`TokenResponseDto`) to return not only the encoded token but also its explicit expiration timestamp, empowering front-end clients to manage sessions accurately.
 * **Automated Lifecycle Validation:** Configured the `.NET Core JwtBearer` middleware with `ValidateLifetime = true`. This guarantees that the system automatically intercepts expired tokens and returns a pristine **401 Unauthorized** response without requiring manual interception logic.
+
+---
+
+### 📅 WEEK 3: Database Relationships & Advanced Queries
+
+#### 13. Relational Data Modeling & Fluent API (Checkpoint 1)
+* **Domain Expansion:** Introduced `Category`, `Order`, and `OrderItem` entities to support complex relational data structures resembling real-world operational flows.
+* **Many-to-Many Architecture:** Engineered a **Many-to-Many** relationship between `Book` and `Category`. Leveraged Entity Framework Core's Fluent API with `.UsingEntity(j => j.ToTable("BookCategories"))` to explicitly define and manage the junction table natively within the Data Access Layer.
+* **One-to-Many Hierarchies:** Designed normalized **One-to-Many** dependencies allowing `User` to track multiple `Order` entities, and `Order` to encapsulate multiple `OrderItem` records.
+* **Referential Integrity & Deletion Rules:** Strictly configured cascade mechanisms (`DeleteBehavior`) aligned with business logic. Forced `Cascade` deletion on `OrderItems` when an `Order` is removed to prevent data orphaning, whilst applying `Restrict` deletion on `User` to safeguard crucial transactional history.
+* **Schema Materialization:** Successfully registered new domain entities as `DbSet<T>` within the application's `DbContext` and applied SQL migrations to seamlessly project the updated Clean Architecture constraints onto the relational database instance.
 
 ---
 
