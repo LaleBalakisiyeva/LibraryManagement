@@ -16,5 +16,7 @@ namespace LibraryManagement.Core.Entities
 
         public int AuthorId { get; set; }
         public Author? Author { get; set; }
+
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
     }
 }
