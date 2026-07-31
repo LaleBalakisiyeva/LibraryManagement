@@ -23,6 +23,10 @@ namespace LibraryManagement.DAL.Context.Configurations
                 .WithMany(a => a.Books)
                 .HasForeignKey(b => b.AuthorId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(b => b.Categories)
+                .WithMany(c => c.Books)
+                .UsingEntity(j => j.ToTable("BookCategories"));
         }
     }
 }

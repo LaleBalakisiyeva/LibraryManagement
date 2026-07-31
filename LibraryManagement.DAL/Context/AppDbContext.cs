@@ -21,6 +21,10 @@ namespace LibraryManagement.DAL.Context
         public DbSet<Book> Books { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
