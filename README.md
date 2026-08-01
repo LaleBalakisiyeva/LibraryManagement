@@ -100,6 +100,12 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **Referential Integrity & Deletion Rules:** Strictly configured cascade mechanisms (`DeleteBehavior`) aligned with business logic. Forced `Cascade` deletion on `OrderItems` when an `Order` is removed to prevent data orphaning, whilst applying `Restrict` deletion on `User` to safeguard crucial transactional history.
 * **Schema Materialization:** Successfully registered new domain entities as `DbSet<T>` within the application's `DbContext` and applied SQL migrations to seamlessly project the updated Clean Architecture constraints onto the relational database instance.
 
+#### 14. Advanced Dynamic Filtering & IQueryable Optimization (Checkpoint 2)
+* **Complex Query Parameters:** Implemented advanced dynamic filtering capabilities allowing API consumers to filter resources using a combination of optional query parameters (`searchTerm`, `authorId`, `minYear`, `maxYear`).
+* **Database-Level Execution:** Leveraged Entity Framework Core's `IQueryable` interface to construct dynamic `Where` clauses inside the Data Access Layer. This enforces filtering directly on the SQL database server (equivalent to Derived Queries) rather than relying on heavy in-memory RAM processing (`.ToList()` operations).
+* **Pipeline Integration:** Seamlessly unified the complex filtering logic with the previously established pagination (`Skip/Take`) and sorting mechanisms, passing state safely from the Controllers through the Service Layer and `UnitOfWork`.
+* **Security & Performance:** Utilized LINQ expressions to automatically generate parameterized SQL queries, effectively neutralizing SQL injection vulnerabilities while ensuring that only precisely matched and paginated records are materialized.
+
 ---
 
 ## 🛠️ Technologies & Tools
