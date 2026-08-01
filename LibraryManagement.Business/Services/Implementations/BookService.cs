@@ -39,9 +39,9 @@ namespace LibraryManagement.Business.Services.Implementations
             return _mapper.Map<IEnumerable<BookDto>>(books);
         }
 
-        public async Task<PaginatedResult<BookDto>> GetAllPagedAsync(int pageNumber, int pageSize, string? sortBy, bool isDescending)
+        public async Task<PaginatedResult<BookDto>> GetAllPagedAsync(int pageNumber, int pageSize, string? sortBy, bool isDescending, string? searchTerm = null, int? authorId = null, int? minYear = null, int? maxYear = null)
         {
-            var (books, totalCount) = await _unitOfWork.Books.GetAllPagedAsync(pageNumber, pageSize, sortBy, isDescending);
+            var (books, totalCount) = await _unitOfWork.Books.GetAllPagedAsync(pageNumber, pageSize, sortBy, isDescending, searchTerm, authorId, minYear, maxYear);
 
             var mappedBooks = _mapper.Map<IEnumerable<BookDto>>(books);
 
