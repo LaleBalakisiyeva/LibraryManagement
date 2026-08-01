@@ -11,6 +11,9 @@ namespace LibraryManagement.DAL.Repositories.Interfaces
     {
         Task<IEnumerable<Book>> GetAllWithAuthorAsync();
         Task<Book> GetByIdWithAuthorAsync(int id);
-        Task<(IEnumerable<Book> Books, int TotalCount)> GetAllPagedAsync(int pageNumber, int pageSize, string? sortBy, bool isDescending);
+
+        Task<(IEnumerable<Book> Books, int TotalCount)> GetAllPagedAsync(
+            int pageNumber, int pageSize, string? sortBy, bool isDescending,
+            string? searchTerm = null, int? authorId = null, int? minYear = null, int? maxYear = null);
     }
 }

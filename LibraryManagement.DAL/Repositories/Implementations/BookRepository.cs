@@ -31,7 +31,9 @@ namespace LibraryManagement.DAL.Repositories.Implementations
                                  .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<(IEnumerable<Book> Books, int TotalCount)> GetAllPagedAsync(int pageNumber, int pageSize, string? sortBy, bool isDescending)
+        public async Task<(IEnumerable<Book> Books, int TotalCount)> GetAllPagedAsync(
+            int pageNumber, int pageSize, string? sortBy, bool isDescending,
+            string? searchTerm = null, int? authorId = null, int? minYear = null, int? maxYear = null)
         {
 
             var query = _context.Books
@@ -39,6 +41,26 @@ namespace LibraryManagement.DAL.Repositories.Implementations
                                 .AsNoTracking()
                                 .AsQueryable();
 
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(b => b.Title.Contains(searchTerm) || b.Author.Name.Contains(searchTerm));
+            }
+
+            if (authorId.HasValue)
+            {
+                query = query.Where(b => b.AuthorId == authorId.Value);
+            }
+
+            if (minYear.HasValue)
+            {
+                query = query.Where(b => b.PublishYear >= minYear.Value);
+            }
+
+            if (maxYear.HasValue)
+            {
+                query = query.Where(b => b.PublishYear <= maxYear.Value);
+            }
+ 
             if (!string.IsNullOrWhiteSpace(sortBy))
             {
                 query = sortBy.ToLower() switch
