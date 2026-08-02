@@ -8,7 +8,7 @@ namespace LibraryManagement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] 
+    [Authorize]
     public class BooksController : ControllerBase
     {
         private readonly IBookService _bookService;
@@ -21,12 +21,26 @@ namespace LibraryManagement.API.Controllers
         [HttpGet]
         [Authorize(Roles = "USER,ADMIN")]
         public async Task<IActionResult> GetAll(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string? sortBy = null,
-            [FromQuery] bool isDescending = false)
+                    [FromQuery] string? searchTerm = null,
+                    [FromQuery] int? authorId = null,
+                    [FromQuery] int? minYear = null,
+                    [FromQuery] int? maxYear = null,
+                    [FromQuery] int pageNumber = 1,
+                    [FromQuery] int pageSize = 10,
+                    [FromQuery] string? sortBy = null,
+                    [FromQuery] bool isDescending = false)
         {
-            var result = await _bookService.GetAllPagedAsync(pageNumber, pageSize, sortBy, isDescending);
+
+            var result = await _bookService.GetAllPagedAsync(
+                pageNumber,
+                pageSize,
+                sortBy,
+                isDescending,
+                searchTerm,
+                authorId,
+                minYear,
+                maxYear);
+
             return Ok(result);
         }
 
