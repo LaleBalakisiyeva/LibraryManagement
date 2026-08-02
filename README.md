@@ -106,6 +106,13 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **Pipeline Integration:** Seamlessly unified the complex filtering logic with the previously established pagination (`Skip/Take`) and sorting mechanisms, passing state safely from the Controllers through the Service Layer and `UnitOfWork`.
 * **Security & Performance:** Utilized LINQ expressions to automatically generate parameterized SQL queries, effectively neutralizing SQL injection vulnerabilities while ensuring that only precisely matched and paginated records are materialized.
 
+#### 15. Dynamic Filtering API Endpoint (Checkpoint 3)
+* **API Endpoint Integration:** Expanded the `BooksController` `GetAll` (HTTP GET) method to accept optional `[FromQuery]` parameters (`searchTerm`, `authorId`, `minYear`, `maxYear`) alongside existing pagination and sorting rules.
+* **Architectural Adherence (Thin Controllers):** Maintained Clean Architecture constraints by keeping the Controller free of complex logic. Request payloads are dynamically delegated strictly to the core Service layer via `_bookService.GetAllPagedAsync`.
+* **RESTful Semantics:** Ensured the endpoint adheres to REST API best practices by safely returning a `200 OK` status code combined with an empty array (`"data": []`) rather than a `404 Not Found` when no resources match the provided search criteria.
+* **Swagger Verification:** Successfully tested complex filtering permutations (text search combined with numeric ranges) interactively via the OpenAPI sandbox, fully validating data mapping from the UI through to the SQL layer.
+* **Endpoint Security:** Guarded the newly enhanced dynamic endpoint to guarantee only authenticated users with specific roles (`USER,ADMIN`) have operational access, requiring a valid JWT signature.
+
 ---
 
 ## 🛠️ Technologies & Tools
