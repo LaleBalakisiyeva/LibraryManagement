@@ -113,7 +113,11 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **Swagger Verification:** Successfully tested complex filtering permutations (text search combined with numeric ranges) interactively via the OpenAPI sandbox, fully validating data mapping from the UI through to the SQL layer.
 * **Endpoint Security:** Guarded the newly enhanced dynamic endpoint to guarantee only authenticated users with specific roles (`USER,ADMIN`) have operational access, requiring a valid JWT signature.
 
----
+#### 16. Transaction Management & DDD Aggregate Roots (Checkpoint 4)
+* **Atomic Transactions:** Implemented explicit database transaction management using the `UnitOfWork` pattern (`BeginTransactionAsync`, `CommitAsync`, `RollbackAsync`) to ensure absolute data consistency across multiple table insertions (`Orders` and `OrderItems`).
+* **Rollback Simulation & Testing:** Engineered specific failure-simulation endpoints to verify automated database rollback triggers when unhandled exceptions occur during midway data processing, guaranteeing no orphaned records remain.
+* **Domain-Driven Design (DDD):** Adopted Aggregate Root principles by treating `Order` as the primary transactional boundary. Eliminated redundant `OrderItem` Repositories and Controllers, instead managing all child entity mutations strictly through the `Order` aggregate lifecycle.
+* **Payload Validation & Mapping:** Structured incoming complex payloads using custom `OrderItemDto` combined with nested `FluentValidation` rules, safely mapping client arrays to normalized Entity Framework relational graphs using AutoMapper.
 
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
