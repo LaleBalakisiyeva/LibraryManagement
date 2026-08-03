@@ -2,6 +2,8 @@
 using LibraryManagement.Business.DTOs.Auth;
 using LibraryManagement.Business.DTOs.Author;
 using LibraryManagement.Business.DTOs.Book;
+using LibraryManagement.Business.DTOs.Order;
+using LibraryManagement.Business.DTOs.OrderItem;
 using LibraryManagement.Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -27,6 +29,9 @@ namespace LibraryManagement.Business.Helpers.Mapper
 
             CreateMap<RegisterDto, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
+
+            CreateMap<CreateOrderDto, Order>();
+            CreateMap<CreateOrderItemDto, OrderItem>();
         }
     }
 }
