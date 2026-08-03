@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,11 @@ namespace LibraryManagement.DAL.Repositories.Interfaces
         IBookRepository Books { get; }
         IAuthorRepository Authors { get; }
         IUserRepository Users { get; }
+        IOrderRepository Orders { get; }
         Task<int> SaveChangesAsync();
+
+        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task CommitAsync();
+        Task RollbackAsync();
     }
 }
