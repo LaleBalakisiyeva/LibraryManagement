@@ -125,6 +125,11 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **Data Integrity Validation:** Applied FluentValidation rules to the outgoing Read DTOs (strictly formatting IDs, timestamps, and pricing constraints) ensuring the API delivers consistent and valid JSON responses.
 * **Performance Tuning:** Utilized `.AsNoTracking()` on read-only queries to disable EF Core's Change Tracker, significantly reducing memory overhead and improving response times for fetching large relational graphs.
 
+#### 18. Transaction Rollback Testing & Data Integrity (Checkpoint 6)
+* **Rollback Simulation (Trick):** Designed and implemented a dedicated negative unit test (`CreateOrderAsync_ShouldTriggerRollback_WhenExceptionIsThrown`) using **xUnit** and **Moq** to simulate deliberate database insertion failures.
+* **Transaction Verification:** Verified that when an unexpected `Exception` occurs during a multi-table write operation, the `CommitAsync` is completely bypassed and `RollbackAsync` is instantly triggered.
+* **Data Consistency:** Proved that both checked and unchecked exceptions are properly intercepted by the `UnitOfWork` pattern, ensuring that no partial, orphaned, or corrupted data is ever persisted to the SQL database.
+
 ---
 
 ## 🛠️ Technologies & Tools
