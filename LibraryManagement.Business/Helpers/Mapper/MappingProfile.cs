@@ -32,6 +32,11 @@ namespace LibraryManagement.Business.Helpers.Mapper
 
             CreateMap<CreateOrderDto, Order>();
             CreateMap<CreateOrderItemDto, OrderItem>();
+
+            CreateMap<Order, OrderReadDto>();
+
+            CreateMap<OrderItem, OrderItemReadDto>()
+                .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book.Title));
         }
     }
 }

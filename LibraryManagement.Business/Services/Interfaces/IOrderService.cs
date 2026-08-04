@@ -12,5 +12,7 @@ namespace LibraryManagement.Business.Services.Interfaces
         Task<int> CreateOrderAsync(CreateOrderDto dto);
 
         Task<int> CreateOrderWithFailureAsync(CreateOrderDto dto);
+
+
     }
 }
