@@ -18,6 +18,7 @@ namespace LibraryManagement.DAL.Repositories.Implementations
         private IAuthorRepository _authorRepository;
         private IUserRepository _userRepository;
         private IOrderRepository _orderRepository;
+        private ICategoryRepository _categoryRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -31,6 +32,7 @@ namespace LibraryManagement.DAL.Repositories.Implementations
         public IUserRepository Users => _userRepository ??= new UserRepository(_context);
 
         public IOrderRepository Orders => _orderRepository ??= new OrderRepository(_context);
+        public ICategoryRepository Categories => _categoryRepository ??= new CategoryRepository(_context);
 
         public async Task<int> SaveChangesAsync()
         {

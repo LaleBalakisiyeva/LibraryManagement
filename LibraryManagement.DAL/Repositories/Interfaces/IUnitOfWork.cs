@@ -13,6 +13,7 @@ namespace LibraryManagement.DAL.Repositories.Interfaces
         IAuthorRepository Authors { get; }
         IUserRepository Users { get; }
         IOrderRepository Orders { get; }
+        ICategoryRepository Categories { get; }
         Task<int> SaveChangesAsync();
 
         Task<IDbContextTransaction> BeginTransactionAsync();

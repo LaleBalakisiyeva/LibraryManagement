@@ -2,6 +2,7 @@
 using LibraryManagement.Business.DTOs.Auth;
 using LibraryManagement.Business.DTOs.Author;
 using LibraryManagement.Business.DTOs.Book;
+using LibraryManagement.Business.DTOs.Category;
 using LibraryManagement.Business.DTOs.Order;
 using LibraryManagement.Business.DTOs.OrderItem;
 using LibraryManagement.Core.Entities;
@@ -37,6 +38,10 @@ namespace LibraryManagement.Business.Helpers.Mapper
 
             CreateMap<OrderItem, OrderItemReadDto>()
                 .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book.Title));
+
+            CreateMap<Category, CategoryGetDto>();
+            CreateMap<CategoryCreateDto, Category>();
+            CreateMap<CategoryUpdateDto, Category>();
         }
     }
 }
