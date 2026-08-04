@@ -5,10 +5,13 @@ This project is a robust and scalable RESTful API for a Library Management Syste
 ## 🏗️ Architecture Layers
 
 The solution is divided into four main layers to ensure a strict separation of concerns, scalability, and maintainability:
+
 * **Core:** The domain layer containing Entities (e.g., `Book`, `Author`, `User`, `Category`, `Order`) and core interface abstractions.
 * **DAL (Data Access Layer):** Manages database operations using **Entity Framework Core**. It implements the **Repository** and **Unit of Work** design patterns for abstracting database interactions.
 * **Business:** Contains the core business logic, **Data Transfer Objects (DTOs)**, object mapping configurations (**AutoMapper**), and validation rules.
 * **API:** The entry point of the application containing Controllers, routing, and custom Middlewares.
+
+---
 
 ## 🚀 Implemented Features
 
@@ -28,10 +31,7 @@ The solution is divided into four main layers to ensure a strict separation of c
 #### 3. Validation & Error Handling (Checkpoint 4)
 * **Input Validation:** Integrated **FluentValidation** (equivalent to Java's `@NotNull`, `@Size`) to validate incoming request payloads directly at the Business layer.
 * **Global Exception Handling:** Implemented a custom `ExceptionHandlingMiddleware` (equivalent to Spring's `@ControllerAdvice`) that acts as a centralized error handler.
-* Provides structured, clean JSON responses for:
-  * `ValidationException` -> Returns **400 Bad Request** with specific field errors.
-  * `NotFoundException` -> Returns **404 Not Found** when requested resources do not exist in the database.
-  * Unhandled Exceptions -> Returns **500 Internal Server Error**.
+* Provides structured JSON responses handling `ValidationException` (400 Bad Request), `NotFoundException` (404 Not Found), and Unhandled Exceptions (500 Internal Server Error).
 
 #### 4. Pagination & Sorting (Checkpoint 5)
 * **Pagination:** Implemented efficient pagination using LINQ's `Skip()` and `Take()` methods at the database (SQL) level to handle large datasets properly.
@@ -118,6 +118,14 @@ The solution is divided into four main layers to ensure a strict separation of c
 * **Rollback Simulation & Testing:** Engineered specific failure-simulation endpoints to verify automated database rollback triggers when unhandled exceptions occur during midway data processing, guaranteeing no orphaned records remain.
 * **Domain-Driven Design (DDD):** Adopted Aggregate Root principles by treating `Order` as the primary transactional boundary. Eliminated redundant `OrderItem` Repositories and Controllers, instead managing all child entity mutations strictly through the `Order` aggregate lifecycle.
 * **Payload Validation & Mapping:** Structured incoming complex payloads using custom `OrderItemDto` combined with nested `FluentValidation` rules, safely mapping client arrays to normalized Entity Framework relational graphs using AutoMapper.
+
+#### 17. N+1 Query Optimization & Eager Loading (Checkpoint 5)
+* **Query Optimization:** Resolved the N+1 query performance issue by implementing **Eager Loading** using Entity Framework Core's `.Include()` and `.ThenInclude()` methods. This consolidated multiple iterative database calls into a single, highly efficient SQL `JOIN` statement.
+* **Read DTO Implementation:** Designed `OrderReadDto` and `OrderItemReadDto` to securely format relational responses. Flattened complex nested structures (e.g., mapping `BookTitle` directly inside the order item) using AutoMapper configurations.
+* **Data Integrity Validation:** Applied FluentValidation rules to the outgoing Read DTOs (strictly formatting IDs, timestamps, and pricing constraints) ensuring the API delivers consistent and valid JSON responses.
+* **Performance Tuning:** Utilized `.AsNoTracking()` on read-only queries to disable EF Core's Change Tracker, significantly reducing memory overhead and improving response times for fetching large relational graphs.
+
+---
 
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
