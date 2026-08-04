@@ -9,5 +9,6 @@ namespace LibraryManagement.DAL.Repositories.Interfaces
 {
     public interface IOrderRepository : IGenericRepository<Order>
     {
+        Task<IEnumerable<Order>> GetAllWithItemsAsync();
     }
 }
