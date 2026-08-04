@@ -69,5 +69,11 @@ namespace LibraryManagement.Business.Services.Implementations
             }
 
         }
+
+        public async Task<IEnumerable<OrderReadDto>> GetAllOrderAsync()
+        {
+            var orders = await _unitOfWork.Orders.GetAllWithItemsAsync();
+            return _mapper.Map<IEnumerable<OrderReadDto>>(orders);
+        }
     }
 }
