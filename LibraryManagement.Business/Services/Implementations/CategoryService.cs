@@ -3,6 +3,7 @@ using LibraryManagement.Business.DTOs.Category;
 using LibraryManagement.Business.Services.Interfaces;
 using LibraryManagement.Core.Entities;
 using LibraryManagement.DAL.Repositories.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,17 +16,30 @@ namespace LibraryManagement.Business.Services.Implementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _cache; 
+        private const string CacheKey = "all_categories";
 
-        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache cache)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cache = cache;
         }
 
         public async Task<IEnumerable<CategoryGetDto>> GetAllAsync()
         {
-            var categories = await _unitOfWork.Categories.GetAllAsync();
-            return _mapper.Map<IEnumerable<CategoryGetDto>>(categories);
+            if (!_cache.TryGetValue(CacheKey, out IEnumerable<CategoryGetDto>? categories))
+            {
+                var entities = await _unitOfWork.Categories.GetAllAsync();
+                categories = _mapper.Map<IEnumerable<CategoryGetDto>>(entities);
+
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+
+                _cache.Set(CacheKey, categories, cacheOptions);
+            }
+
+            return categories!;
         }
 
         public async Task<CategoryGetDto> GetByIdAsync(int id)
@@ -40,6 +54,8 @@ namespace LibraryManagement.Business.Services.Implementations
             var category = _mapper.Map<Category>(dto);
             await _unitOfWork.Categories.AddAsync(category);
             await _unitOfWork.SaveChangesAsync();
+
+            _cache.Remove(CacheKey);
         }
 
         public async Task UpdateAsync(CategoryUpdateDto dto)
@@ -50,6 +66,8 @@ namespace LibraryManagement.Business.Services.Implementations
             _mapper.Map(dto, category);
             _unitOfWork.Categories.Update(category);
             await _unitOfWork.SaveChangesAsync();
+
+            _cache.Remove(CacheKey);
         }
 
         public async Task DeleteAsync(int id)
@@ -59,6 +77,8 @@ namespace LibraryManagement.Business.Services.Implementations
 
             _unitOfWork.Categories.Remove(category);
             await _unitOfWork.SaveChangesAsync();
+
+            _cache.Remove(CacheKey);
         }
     }
 }
