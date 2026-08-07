@@ -132,6 +132,16 @@ The solution is divided into four main layers to ensure a strict separation of c
 
 ---
 
+### 📅 WEEK 4: Advanced Features & Caching
+
+#### 19. In-Memory Caching & Performance Optimization (Checkpoint 1)
+* **Read-Oriented Caching:** Integrated .NET Core's native `IMemoryCache` (equivalent to Spring Cache abstraction) into the Business Layer to significantly improve the read performance of frequently accessed, rarely modified endpoints (e.g., retrieving the Categories list).
+* **Cache Invalidation Trick (Data Consistency):** Engineered strict cache eviction policies within the `Create`, `Update`, and `Delete` operational flows. Ensuring that whenever an entity is modified, the associated `CacheKey` is immediately purged (`_cache.Remove`), guaranteeing the API never returns stale data to the client.
+* **Absolute Expiration Management:** Configured explicit `MemoryCacheEntryOptions` with a defined absolute expiration window (e.g., 30 minutes) to automate lifecycle management and prevent memory leaks.
+* **Dependency Injection Integration:** Registered the caching service seamlessly within the application pipeline (`builder.Services.AddMemoryCache()`) and injected it via constructor injection into the relevant Service classes without violating Clean Architecture principles.
+
+---
+
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
