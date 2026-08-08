@@ -142,6 +142,17 @@ The solution is divided into four main layers to ensure a strict separation of c
 
 ---
 
+#### 20. File Management & Secure Upload Infrastructure (Checkpoint 2)
+* **Multipart Form Data:** Engineered dedicated upload and download endpoints within a new `FilesController` to handle `multipart/form-data` requests, allowing API consumers to securely transfer files using .NET's native `IFormFile` interface.
+* **Clean Architecture Abstraction:** Completely decoupled file system operations from the API layer by introducing an `IFileService` interface within the Business layer. Files are persisted to the server's local physical storage (dynamically generated `Uploads` directory) using `System.IO` streams, strictly avoiding relational database bloat.
+* **File Upload Trick (Security Validation):** Implemented a rigorous two-tier validation mechanism to neutralize malicious file upload vulnerabilities:
+  * **Size Limitation:** Enforced a strict maximum file size threshold (e.g., 5MB) at the service level. Payloads exceeding this limit instantly trigger a structured `ValidationException` (400 Bad Request).
+  * **Extension Whitelisting:** Prevented arbitrary file execution (e.g., `.exe`, `.sh`) by validating incoming files against a predefined whitelist of safe extensions (`.jpg`, `.jpeg`, `.png`, `.pdf`). 
+* **Data Integrity & Overwrite Protection:** Automated the renaming of all incoming files using universally unique identifiers (`Guid`). This guarantees zero collision rates and prevents the overwriting of existing server files.
+* **Access Control Guardrails:** Secured the upload endpoint with the `[Authorize]` attribute, ensuring only authenticated clients possessing a valid JWT can upload assets, while maintaining open access for the download endpoint to serve resources efficiently.
+
+---
+
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
