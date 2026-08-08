@@ -1,4 +1,5 @@
-﻿using LibraryManagement.Business.Services.Interfaces;
+﻿using LibraryManagement.Business.Helpers.Exceptions;
+using LibraryManagement.Business.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -56,10 +57,10 @@ namespace LibraryManagement.Business.Services.Implementations
         public async Task<(byte[] FileContents, string ContentType, string FileName)> DownloadFileAsync(string folder, string fileName)
         {
             var rootPath = _environment.WebRootPath ?? _environment.ContentRootPath;
-            var filePath = Path.Combine(rootPath, folder);
+            var filePath = Path.Combine(rootPath, folder, fileName);
 
-            if(!File.Exists(filePath))
-                    throw new FileNotFoundException("The requested file was not found.");
+            if (!File.Exists(filePath))
+                throw new NotFoundException("The requested file was not found.");
 
             var fileBytes = await File.ReadAllBytesAsync(filePath);
             var contentType = GetMimeType(filePath);
