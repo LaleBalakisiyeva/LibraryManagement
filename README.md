@@ -162,6 +162,14 @@ The solution is divided into four main layers to ensure a strict separation of c
 
 ---
 
+#### 22. Asynchronous Processing & Task Management (Checkpoint 4)
+* **Fire-and-Forget Architecture:** Implemented non-blocking asynchronous processing using .NET's `Task.Run()` methodology, serving as the architectural equivalent to Java Spring's `@Async` annotation for background task execution.
+* **Background Email Simulation:** Engineered an isolated `IEmailService` within the Business layer to handle long-running background operations. Simulated a complex I/O task (e.g., SMTP server connection and payload delivery) using a deliberate 5-second `await Task.Delay()`.
+* **Non-Blocking API Responses:** Integrated the asynchronous service into the `AuthController`'s `Register` endpoint. The main HTTP thread immediately returns a `200 OK` response to the client upon successful user creation, completely bypassing the 5-second email dispatch delay and significantly enhancing the user experience (UX).
+* **Lifecycle Tracking & Logging:** Utilized `ILogger` natively within the background task to accurately monitor the initialization and successful completion of the delayed email process. This validates the absolute separation of the background execution thread from the primary API request pool via console outputs.
+
+---
+
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
