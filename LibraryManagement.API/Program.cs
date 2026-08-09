@@ -1,4 +1,5 @@
 using FluentValidation;
+using LibraryManagement.API.BackgroundServices;
 using LibraryManagement.API.Middlewares;
 using LibraryManagement.Business;
 using LibraryManagement.Business.Validators.Book;
@@ -93,6 +94,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 // ==========================================
+
+builder.Services.AddHostedService<DailyCleanupBackgroundService>();
 
 var app = builder.Build();
 
