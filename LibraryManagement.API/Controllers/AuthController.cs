@@ -10,10 +10,12 @@ namespace LibraryManagement.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IEmailService _emailService;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, IEmailService emailService)
         {
             _authService = authService;
+            _emailService = emailService;
         }
 
         [HttpPost("register")]
@@ -22,7 +24,9 @@ namespace LibraryManagement.API.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             await _authService.RegisterAsync(dto);
-            return Ok(new { message = "User registered successfully." });
+
+            _=Task.Run(() => _emailService.SendWelcomeEmailAsync(dto.Email));
+            return Ok(new { message = "User registered successfully. A welcome email is being sent in the background." });
         }
 
         [HttpPost("login")]
