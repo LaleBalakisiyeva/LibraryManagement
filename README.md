@@ -153,6 +153,15 @@ The solution is divided into four main layers to ensure a strict separation of c
 
 ---
 
+#### 21. Scheduled Background Tasks & Automations (Checkpoint 3)
+* **Background Service Integration:** Implemented automated background processing using .NET Core's native `BackgroundService` (`IHostedService`) abstract class, serving as the architectural equivalent to Spring's `@Scheduled` annotation.
+* **Automated File Cleanup (Business Logic):** Developed a `DailyCleanupBackgroundService` dedicated to automated server maintenance. The service periodically scans the application's physical `Uploads` directory to identify and safely delete temporary or orphaned files older than 24 hours, effectively preventing server storage bloat.
+* **Non-Blocking Asynchronous Execution:** Engineered the background execution loop utilizing asynchronous task delays (`await Task.Delay`) rather than traditional thread-blocking mechanisms (`Thread.Sleep`). This ensures the scheduled job operates silently in a background context without consuming or blocking the primary HTTP API thread pool.
+* **Fault Tolerance & Logging:** Embedded robust exception handling (`try-catch`) and structured tracking (`ILogger`) natively within the `while` loop execution. This guarantees that isolated filesystem errors (e.g., a file being locked by another process) are safely logged and bypassed without crashing the entire singleton background service.
+* **Application Lifecycle Registration:** Seamlessly integrated the background worker into the application's startup lifecycle by registering it as a hosted service (`builder.Services.AddHostedService<T>()`) within the `Program.cs` pipeline, adhering strictly to dependency injection standards.
+
+---
+
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
