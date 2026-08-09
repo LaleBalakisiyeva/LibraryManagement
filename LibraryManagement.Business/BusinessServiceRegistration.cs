@@ -23,6 +23,7 @@ namespace LibraryManagement.Business
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IEmailService, EmailService>();
 
             services.AddAutoMapper(cfg =>
             {
