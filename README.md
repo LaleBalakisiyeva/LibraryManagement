@@ -170,6 +170,13 @@ The solution is divided into four main layers to ensure a strict separation of c
 
 ---
 
+#### 23. Cache Invalidation & Data Consistency (Checkpoint 5)
+* **Strict Cache Eviction:** Implemented precise cache invalidation rules using `_cache.Remove(CacheKey)` across all resource-mutating operations (`Create`, `Update`, `Delete`) within the core entity services (`BookService`, `AuthorService`, and `CategoryService`).
+* **The "Hard Thing" Resolved:** Actively addressed the classic "cache invalidation" computer science problem (often tested as a tricky architectural flaw). Engineered the pipeline to guarantee the API never returns stale, orphaned, or outdated data after a persistent entity is modified.
+* **State Synchronization:** Ensured seamless harmony between the underlying SQL database and the volatile RAM state. Upon executing a mutation, the obsolete cache is instantly purged, forcing the subsequent `GET` requests to re-materialize fresh data via Entity Framework and securely repopulate the `IMemoryCache`.
+
+---
+
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
