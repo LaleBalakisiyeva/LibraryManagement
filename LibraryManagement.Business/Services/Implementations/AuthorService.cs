@@ -5,6 +5,7 @@ using LibraryManagement.Business.Helpers.Exceptions;
 using LibraryManagement.Business.Services.Interfaces;
 using LibraryManagement.Core.Entities;
 using LibraryManagement.DAL.Repositories.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,25 +18,40 @@ namespace LibraryManagement.Business.Services.Implementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _cache;
         private readonly IValidator<AuthorCreateDto> _createValidator;
         private readonly IValidator<AuthorUpdateDto> _updateValidator;
+
+        private const string CacheKey = "all_authors";
 
         public AuthorService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
+            IMemoryCache cache,
             IValidator<AuthorCreateDto> createValidator,
             IValidator<AuthorUpdateDto> updateValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cache = cache;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
 
         public async Task<IEnumerable<AuthorDto>> GetAllAsync()
         {
-            var authors = await _unitOfWork.Authors.GetAllAsync();
-            return _mapper.Map<IEnumerable<AuthorDto>>(authors);
+            if (!_cache.TryGetValue(CacheKey, out IEnumerable<AuthorDto>? authors))
+            {
+                var authorEntities = await _unitOfWork.Authors.GetAllAsync();
+                authors = _mapper.Map<IEnumerable<AuthorDto>>(authorEntities);
+
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+
+                _cache.Set(CacheKey, authors, cacheOptions);
+            }
+
+            return authors!;
         }
 
         public async Task<AuthorDto> GetByIdAsync(int id)
@@ -58,6 +74,8 @@ namespace LibraryManagement.Business.Services.Implementations
             var author = _mapper.Map<Core.Entities.Author>(dto);
             await _unitOfWork.Authors.AddAsync(author);
             await _unitOfWork.SaveChangesAsync();
+
+            _cache.Remove(CacheKey);
         }
 
         public async Task UpdateAsync(int id, AuthorUpdateDto dto)
@@ -75,6 +93,8 @@ namespace LibraryManagement.Business.Services.Implementations
             _mapper.Map(dto, author);
             _unitOfWork.Authors.Update(author);
             await _unitOfWork.SaveChangesAsync();
+
+            _cache.Remove(CacheKey);
         }
 
         public async Task DeleteAsync(int id)
@@ -85,6 +105,8 @@ namespace LibraryManagement.Business.Services.Implementations
 
             _unitOfWork.Authors.Remove(author);
             await _unitOfWork.SaveChangesAsync();
+
+            _cache.Remove(CacheKey);
         }
     }
 }
