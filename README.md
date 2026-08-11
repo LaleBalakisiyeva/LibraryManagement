@@ -177,6 +177,13 @@ The solution is divided into four main layers to ensure a strict separation of c
 
 ---
 
+#### 24. Environment Configuration & Profiling (Checkpoint 6)
+* **Configuration Externalization:** Extracted all hardcoded configuration parameters (Database Connection Strings, JWT Secrets, Application behaviors) from the source code directly into isolated environment files, strictly adhering to Clean Architecture configurations.
+* **Environment Profiles (Dev/Prod):** Engineered a robust configuration hierarchy mimicking Java Spring's `application.yml` profile management. Established `appsettings.Development.json` for flexible local debugging (extended token lifetimes, local SQL server) and `appsettings.Production.json` containing hardened security policies (restricted `AllowedHosts`, short-lived tokens, secure cloud database credentials).
+* **Dynamic Dependency Injection:** Utilized ASP.NET Core's native `IConfiguration` interface to dynamically resolve parameters at runtime based on the active `ASPNETCORE_ENVIRONMENT` variable. This ensures zero manual code changes are required when promoting the application from a staging environment to a live production server.
+
+---
+
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
