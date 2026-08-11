@@ -184,6 +184,13 @@ The solution is divided into four main layers to ensure a strict separation of c
 
 ---
 
+#### 25. OpenAPI/Swagger Documentation Update (Checkpoint 7)
+* **JWT Authorization UI:** Upgraded the Swagger configuration (`Program.cs`) to include an `AddSecurityDefinition` for Bearer tokens. This enables real-time testing of secured endpoints directly from the browser without third-party API clients.
+* **Multipart/Form-Data Support:** Ensured that file upload endpoints properly render the native file-picker UI components within Swagger, providing a seamless DX (Developer Experience) for testing magic bytes/MIME validations.
+* **API Maturity:** Reached a mature state of documentation where all routing, caching endpoints, and background task triggers are clearly visible and structured according to standard OpenAPI specifications.
+
+ --- 
+
 ## 🛠️ Technologies & Tools
 * **Framework:** .NET Core / ASP.NET Core Web API
 * **ORM:** Entity Framework Core
